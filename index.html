@@ -9,10 +9,12 @@
   body {
     margin: 0;
     padding: 20px 20px 20px 280px;
+    /* IMPORTANT: Make sure the image loads correctly */
     background: #008080 url('clouds.jpg') center/cover no-repeat fixed;
     font-family: 'MS Reference Sans Serif', sans-serif;
     font-size: 13px;
     line-height: 1.4;
+    min-height: 100vh;
   }
 
   .window {
@@ -88,14 +90,14 @@
     text-align: right;
   }
 
-  /* Clippy Container */
+  /* Clippy - smoother movement */
   #clippy {
     position: fixed;
     right: 40px;
     top: 120px;
     width: 180px;
     z-index: 999;
-    transition: top 0.4s ease;
+    transition: top 0.6s cubic-bezier(0.25, 0.1, 0.25, 1); /* much smoother */
   }
 
   #clippy img {
@@ -129,7 +131,7 @@
 </head>
 <body>
 
-<!-- The three windows -->
+<!-- Windows -->
 <div class="window">
   <div class="title-bar">
     <span>FutureJob™ v1.0 - Karrier Sors Előrejelző</span>
@@ -191,20 +193,28 @@
 // Restart GIF animation every time Clippy speaks
 function restartGif() {
   const gif = document.getElementById("clippyGif");
-  const src = gif.src;
+  const currentSrc = gif.src;
   gif.src = '';
-  gif.src = src;
+  setTimeout(() => { gif.src = currentSrc; }, 10); // small delay for reliable restart
 }
 
 function updateClippy(text) {
   document.getElementById("bubble").innerHTML = text;
-  restartGif();                    // This restarts the animation
+  restartGif();
 }
 
+// Smoother scroll following
+let lastScroll = 0;
 window.addEventListener('scroll', () => {
   const clippy = document.getElementById('clippy');
   const scrollY = window.scrollY;
-  clippy.style.top = Math.max(80, 120 + scrollY * 0.6) + 'px';
+  const targetTop = Math.max(80, 120 + scrollY * 0.5);
+  
+  // Only update if there's meaningful change (prevents jitter)
+  if (Math.abs(targetTop - lastScroll) > 5) {
+    clippy.style.top = targetTop + 'px';
+    lastScroll = targetTop;
+  }
 });
 
 function predictJob() {
