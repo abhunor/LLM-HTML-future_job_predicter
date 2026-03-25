@@ -2,14 +2,14 @@
 <html lang="hu">
 <head>
 <meta charset="UTF-8">
-<title>Uni AI Tools - Windows 95 Style + Unhinged Clippy</title>
+<title>Uni AI Tools - Windows 95 Style</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=MS+Reference+Sans+Serif&display=swap');
 
   body {
     margin: 0;
     padding: 20px 20px 20px 280px;
-    background: #008080 url('https://i.imgur.com/0z5v7pE.jpg') center/cover no-repeat fixed;
+    background: #008080 url('clouds.jpg') center/cover no-repeat fixed;
     font-family: 'MS Reference Sans Serif', sans-serif;
     font-size: 13px;
     line-height: 1.4;
@@ -88,7 +88,7 @@
     text-align: right;
   }
 
-  /* Animated Clippy */
+  /* Clippy Container */
   #clippy {
     position: fixed;
     right: 40px;
@@ -179,18 +179,26 @@
   <div class="status">Kész</div>
 </div>
 
-<!-- Animated Clippy -->
+<!-- Your custom Clippy -->
 <div id="clippy">
-  <img src="https://i.imgur.com/7vN9v9K.gif" alt="Animated Clippy">
+  <img id="clippyGif" src="clippy.gif" alt="Clippy">
   <div id="bubble" class="speech-bubble">
     Hé haver, készen állsz tönkretenni az életedet? 😈
   </div>
 </div>
 
 <script>
-// Clippy reactions
+// Restart GIF animation every time Clippy speaks
+function restartGif() {
+  const gif = document.getElementById("clippyGif");
+  const src = gif.src;
+  gif.src = '';
+  gif.src = src;
+}
+
 function updateClippy(text) {
   document.getElementById("bubble").innerHTML = text;
+  restartGif();                    // This restarts the animation
 }
 
 window.addEventListener('scroll', () => {
