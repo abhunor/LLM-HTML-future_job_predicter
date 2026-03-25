@@ -9,7 +9,6 @@
   body {
     margin: 0;
     padding: 20px 20px 20px 280px;
-    /* Changed to clouds.jpeg as you requested */
     background: #008080 url('clouds.jpeg') center/cover no-repeat fixed;
     font-family: 'MS Reference Sans Serif', sans-serif;
     font-size: 13px;
@@ -115,8 +114,9 @@
     border: 3px solid #000;
     padding: 12px;
     font-size: 12px;
-    line-height: 1.3;
+    line-height: 1.4;
     box-shadow: 3px 3px 0 #000;
+    min-height: 60px;
   }
 
   .speech-bubble:after {
@@ -131,7 +131,6 @@
 </head>
 <body>
 
-<!-- The three windows -->
 <div class="window">
   <div class="title-bar">
     <span>FutureJob™ v1.0 - Karrier Sors Előrejelző</span>
@@ -183,31 +182,41 @@
 
 <!-- Clippy -->
 <div id="clippy">
-  <img id="clippyGif" src="clippy.gif" alt="Clippy">
-  <div id="bubble" class="speech-bubble">
-    Hé haver, készen állsz tönkretenni az életedet? 😈
-  </div>
+  <img id="clippyImg" src="clippy.gif" alt="Clippy">
+  <div id="bubble" class="speech-bubble"></div>
 </div>
 
 <script>
-// Restart GIF animation when Clippy speaks
-function restartGif() {
-  const gif = document.getElementById("clippyGif");
-  const src = gif.src;
-  gif.src = '';
-  setTimeout(() => { gif.src = src; }, 10);
+// Typewriter effect + GIF restart
+function typeWriter(text, element, callback) {
+  element.innerHTML = '';
+  let i = 0;
+  const speed = 30; // typing speed in ms
+
+  function type() {
+    if (i < text.length) {
+      element.innerHTML += text.charAt(i);
+      i++;
+      setTimeout(type, speed);
+    } else if (callback) {
+      callback();
+    }
+  }
+  type();
 }
 
-function updateClippy(text) {
-  document.getElementById("bubble").innerHTML = text;
-  restartGif();
-}
+function speak(text) {
+  const bubble = document.getElementById("bubble");
+  const img = document.getElementById("clippyImg");
 
-window.addEventListener('scroll', () => {
-  const clippy = document.getElementById('clippy');
-  const scrollY = window.scrollY;
-  clippy.style.top = Math.max(80, 120 + scrollY * 0.5) + 'px';
-});
+  // Restart GIF animation
+  const currentSrc = img.src;
+  img.src = '';
+  setTimeout(() => { img.src = currentSrc; }, 10);
+
+  // Type out the text
+  typeWriter(text, bubble);
+}
 
 function predictJob() {
   const name = document.getElementById("name").value || "Névtelen";
@@ -222,7 +231,7 @@ function predictJob() {
     Juttatások: Nincsenek<br>
     Lélekvesztés: 94%
   `;
-  updateClippy("Haha, gratulálok a rabszolgasághoz!");
+  speak("Haha, gratulálok a rabszolgasághoz!");
 }
 
 function roastProfessor() {
@@ -237,7 +246,7 @@ function roastProfessor() {
   ];
   const roast = roasts[Math.floor(Math.random() * roasts.length)];
   document.getElementById("resultRoast").innerHTML = roast;
-  updateClippy("BRUH... ez még nekem is fájt.");
+  speak("BRUH... ez még nekem is fájt.");
 }
 
 function generateExcuse() {
@@ -250,7 +259,7 @@ function generateExcuse() {
   };
   const exc = excuses[type][Math.floor(Math.random() * excuses[type].length)];
   document.getElementById("resultExcuse").innerHTML = exc;
-  updateClippy("Ez az excuse gyengébb, mint a te motivációd az egyetemen.");
+  speak("Ez az excuse gyengébb, mint a te motivációd az egyetemen.");
 }
 </script>
 
