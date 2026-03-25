@@ -104,6 +104,43 @@
     margin: 0 auto 5px;
   }
 
+  /* Lofi Player - smaller, under homework */
+  #lofiPlayer {
+    position: fixed;
+    left: 30px;
+    top: 220px;
+    width: 160px;
+    background: #c0c0c0;
+    border-top: 2px solid #dfdfdf;
+    border-left: 2px solid #dfdfdf;
+    border-bottom: 2px solid #808080;
+    border-right: 2px solid #808080;
+    box-shadow: 3px 3px 0 #000;
+    padding: 8px;
+    font-size: 11px;
+  }
+
+  .lofi-title {
+    text-align: center;
+    font-weight: bold;
+    margin-bottom: 8px;
+  }
+
+  .lofi-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  button.lofi-btn {
+    padding: 4px 8px;
+    font-size: 11px;
+  }
+
+  input[type="range"] {
+    width: 100%;
+  }
+
   /* Pong Window */
   #pongWindow {
     position: fixed;
@@ -137,6 +174,45 @@
     font-size: 18px;
     margin-bottom: 8px;
     font-weight: bold;
+  }
+
+  /* Clippy */
+  #clippy {
+    position: fixed;
+    right: 40px;
+    top: 120px;
+    width: 180px;
+    z-index: 999;
+    transition: top 0.6s cubic-bezier(0.25, 0.1, 0.25, 1);
+  }
+
+  #clippy img {
+    width: 100%;
+    image-rendering: pixelated;
+    filter: drop-shadow(4px 4px 0 #000);
+  }
+
+  .speech-bubble {
+    position: absolute;
+    left: -230px;
+    top: 20px;
+    width: 210px;
+    background: white;
+    border: 3px solid #000;
+    padding: 12px;
+    font-size: 12px;
+    line-height: 1.4;
+    box-shadow: 3px 3px 0 #000;
+    min-height: 60px;
+  }
+
+  .speech-bubble:after {
+    content: '';
+    position: absolute;
+    right: -20px;
+    top: 35px;
+    border: 10px solid transparent;
+    border-left-color: #000;
   }
 </style>
 </head>
@@ -195,6 +271,16 @@
   <div>Homework.exe</div>
 </div>
 
+<!-- Lofi Player - smaller, under homework -->
+<div id="lofiPlayer">
+  <div class="lofi-title">Lofi Girl Radio</div>
+  <div class="lofi-controls">
+    <button class="lofi-btn" id="playBtn">▶ Play</button>
+    <input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="0.7">
+    <div style="font-size:10px; text-align:center;" id="timeDisplay">0:00 / 0:00</div>
+  </div>
+</div>
+
 <!-- Pong Window -->
 <div id="pongWindow">
   <div class="title-bar">
@@ -214,15 +300,17 @@
 </div>
 
 <script>
-// ====================== TYPEWRITER + CLIPPY ======================
+// ====================== CLIPPY + TYPEWRITER ======================
 function speak(text) {
   const bubble = document.getElementById("bubble");
   const img = document.getElementById("clippyImg");
   
+  // Restart GIF
   const currentSrc = img.src;
   img.src = '';
   setTimeout(() => img.src = currentSrc, 10);
 
+  // Typewriter
   bubble.innerHTML = '';
   let i = 0;
   function type() {
@@ -235,12 +323,44 @@ function speak(text) {
   type();
 }
 
-// ====================== PONG GAME (Left/Right arrows control paddle) ======================
+// ====================== LOFI PLAYER ======================
+const audio = new Audio('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3'); // replace with your own lofi if you want
+audio.loop = true;
+
+const playBtn = document.getElementById('playBtn');
+const volumeSlider = document.getElementById('volumeSlider');
+const timeDisplay = document.getElementById('timeDisplay');
+
+playBtn.addEventListener('click', () => {
+  if (audio.paused) {
+    audio.play();
+    playBtn.textContent = '❚❚ Pause';
+  } else {
+    audio.pause();
+    playBtn.textContent = '▶ Play';
+  }
+});
+
+volumeSlider.addEventListener('input', () => {
+  audio.volume = volumeSlider.value;
+});
+
+audio.addEventListener('timeupdate', () => {
+  const current = Math.floor(audio.currentTime);
+  const duration = Math.floor(audio.duration) || 0;
+  timeDisplay.textContent = `${formatTime(current)} / ${formatTime(duration)}`;
+});
+
+function formatTime(seconds) {
+  const min = Math.floor(seconds / 60);
+  const sec = Math.floor(seconds % 60);
+  return `${min}:${sec < 10 ? '0' : ''}${sec}`;
+}
+
+// ====================== PONG (Left/Right arrows) ======================
 let canvas = document.getElementById('pongCanvas');
 let ctx = canvas.getContext('2d');
-let scorePlayer = 0;
-let scoreAI = 0;
-
+let scorePlayer = 0, scoreAI = 0;
 let paddleHeight = 80, paddleWidth = 10, ballSize = 10;
 let playerY = canvas.height / 2 - paddleHeight / 2;
 let aiY = canvas.height / 2 - paddleHeight / 2;
@@ -248,14 +368,12 @@ let ballX = canvas.width / 2;
 let ballY = canvas.height / 2;
 let ballSpeedX = 5;
 let ballSpeedY = 3;
-
 let upPressed = false;
 let downPressed = false;
 
 function draw() {
   ctx.fillStyle = '#000';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
-
   ctx.strokeStyle = '#fff';
   ctx.setLineDash([5, 15]);
   ctx.beginPath();
@@ -265,18 +383,15 @@ function draw() {
   ctx.setLineDash([]);
 
   ctx.fillStyle = '#fff';
-  ctx.fillRect(10, playerY, paddleWidth, paddleHeight);           // Player
-  ctx.fillRect(canvas.width - 20, aiY, paddleWidth, paddleHeight); // AI
-
+  ctx.fillRect(10, playerY, paddleWidth, paddleHeight);
+  ctx.fillRect(canvas.width - 20, aiY, paddleWidth, paddleHeight);
   ctx.fillRect(ballX, ballY, ballSize, ballSize);
 }
 
 function update() {
-  // Player movement with LEFT / RIGHT arrows
   if (upPressed && playerY > 0) playerY -= 8;
   if (downPressed && playerY < canvas.height - paddleHeight) playerY += 8;
 
-  // Simple AI
   if (aiY + paddleHeight/2 < ballY) aiY += 6;
   if (aiY + paddleHeight/2 > ballY) aiY -= 6;
 
@@ -288,14 +403,8 @@ function update() {
   if (ballX <= 20 && ballY > playerY && ballY < playerY + paddleHeight) ballSpeedX = -ballSpeedX * 1.05;
   if (ballX >= canvas.width - 30 && ballY > aiY && ballY < aiY + paddleHeight) ballSpeedX = -ballSpeedX * 1.05;
 
-  if (ballX < 0) {
-    scoreAI++;
-    resetBall();
-  }
-  if (ballX > canvas.width) {
-    scorePlayer++;
-    resetBall();
-  }
+  if (ballX < 0) { scoreAI++; resetBall(); }
+  if (ballX > canvas.width) { scorePlayer++; resetBall(); }
 
   document.getElementById('score').textContent = `Játékos: ${scorePlayer}  AI: ${scoreAI}`;
 }
@@ -314,16 +423,14 @@ function gameLoop() {
 }
 
 document.addEventListener('keydown', e => {
-  if (e.key === 'ArrowLeft') upPressed = true;   // Left Arrow = Up
-  if (e.key === 'ArrowRight') downPressed = true; // Right Arrow = Down
+  if (e.key === 'ArrowLeft') upPressed = true;
+  if (e.key === 'ArrowRight') downPressed = true;
 });
-
 document.addEventListener('keyup', e => {
   if (e.key === 'ArrowLeft') upPressed = false;
   if (e.key === 'ArrowRight') downPressed = false;
 });
 
-// Open / Close Pong
 function openPong() {
   document.getElementById('pongWindow').style.display = 'block';
   scorePlayer = 0;
