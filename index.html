@@ -14,7 +14,6 @@
     font-size: 13px;
     line-height: 1.4;
     min-height: 100vh;
-    overflow-x: hidden;
   }
 
   .window {
@@ -38,17 +37,54 @@
     align-items: center;
   }
 
-  .title-bar span:last-child {
-    cursor: pointer;
-    font-size: 16px;
-  }
-
   .content {
     padding: 15px;
     background: #c0c0c0;
   }
 
-  /* Desktop Icon */
+  input[type="text"], input[type="number"], select {
+    width: 100%;
+    padding: 5px;
+    background: white;
+    border: 2px solid;
+    border-color: #808080 #fff #fff #808080;
+    font-family: inherit;
+    margin-bottom: 8px;
+  }
+
+  button {
+    background: #c0c0c0;
+    border: 2px solid;
+    border-color: #fff #808080 #808080 #fff;
+    padding: 8px 20px;
+    font-weight: bold;
+    cursor: pointer;
+    margin: 10px 0;
+  }
+
+  button:active {
+    border-color: #808080 #fff #fff #808080;
+  }
+
+  .result {
+    margin-top: 12px;
+    padding: 12px;
+    background: #ffffff;
+    border: 2px inset #c0c0c0;
+    min-height: 110px;
+    font-weight: bold;
+    color: #000;
+  }
+
+  .status {
+    background: #c0c0c0;
+    border-top: 2px solid #808080;
+    padding: 4px 8px;
+    font-size: 11px;
+    text-align: right;
+  }
+
+  /* Homework Icon - Left Side */
   #homeworkIcon {
     position: fixed;
     left: 30px;
@@ -93,7 +129,6 @@
     display: block;
     margin: 0 auto;
     border: 2px solid #fff;
-    image-rendering: pixelated;
   }
 
   .pong-score {
@@ -103,15 +138,53 @@
     margin-bottom: 8px;
     font-weight: bold;
   }
+
+  /* Clippy */
+  #clippy {
+    position: fixed;
+    right: 40px;
+    top: 120px;
+    width: 180px;
+    z-index: 999;
+    transition: top 0.6s cubic-bezier(0.25, 0.1, 0.25, 1);
+  }
+
+  #clippy img {
+    width: 100%;
+    image-rendering: pixelated;
+    filter: drop-shadow(4px 4px 0 #000);
+  }
+
+  .speech-bubble {
+    position: absolute;
+    left: -230px;
+    top: 20px;
+    width: 210px;
+    background: white;
+    border: 3px solid #000;
+    padding: 12px;
+    font-size: 12px;
+    line-height: 1.4;
+    box-shadow: 3px 3px 0 #000;
+    min-height: 60px;
+  }
+
+  .speech-bubble:after {
+    content: '';
+    position: absolute;
+    right: -20px;
+    top: 35px;
+    border: 10px solid transparent;
+    border-left-color: #000;
+  }
 </style>
 </head>
 <body>
 
-<!-- Main Tools -->
+<!-- Stacked Windows (non-closable) -->
 <div class="window">
   <div class="title-bar">
     <span>FutureJob™ v1.0 - Karrier Sors Előrejelző</span>
-    <span onclick="this.parentElement.parentElement.style.display='none'">×</span>
   </div>
   <div class="content">
     <p><strong>Üdvözöljük!</strong></p>
@@ -127,7 +200,6 @@
 <div class="window">
   <div class="title-bar">
     <span>Professor Roast 95 - Oktatói Megszégyenítő</span>
-    <span onclick="this.parentElement.parentElement.style.display='none'">×</span>
   </div>
   <div class="content">
     <label>Írd be a tárgy nevét vagy a tanár nevét:</label>
@@ -141,7 +213,6 @@
 <div class="window">
   <div class="title-bar">
     <span>AI Excuse Generator 1.0</span>
-    <span onclick="this.parentElement.parentElement.style.display='none'">×</span>
   </div>
   <div class="content">
     <label>Válaszd ki a szituációt:</label>
@@ -157,7 +228,7 @@
   <div class="status">Kész</div>
 </div>
 
-<!-- Homework Icon (left side) -->
+<!-- Homework Icon -->
 <div id="homeworkIcon" onclick="openPong()">
   <img src="homework.png" alt="Homework">
   <div>Homework.exe</div>
@@ -197,23 +268,19 @@ function speak(text) {
     if (i < text.length) {
       bubble.innerHTML += text.charAt(i);
       i++;
-      setTimeout(type, 25);
+      setTimeout(type, 30);
     }
   }
   type();
 }
 
 // ====================== PONG GAME ======================
-let pongWindow = document.getElementById('pongWindow');
 let canvas = document.getElementById('pongCanvas');
 let ctx = canvas.getContext('2d');
 let scorePlayer = 0;
 let scoreAI = 0;
 
-let paddleHeight = 80;
-let paddleWidth = 10;
-let ballSize = 10;
-
+let paddleHeight = 80, paddleWidth = 10, ballSize = 10;
 let playerY = canvas.height / 2 - paddleHeight / 2;
 let aiY = canvas.height / 2 - paddleHeight / 2;
 let ballX = canvas.width / 2;
@@ -225,11 +292,9 @@ let upPressed = false;
 let downPressed = false;
 
 function draw() {
-  // Background
   ctx.fillStyle = '#000';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-  // Center line
   ctx.strokeStyle = '#fff';
   ctx.setLineDash([5, 15]);
   ctx.beginPath();
@@ -238,40 +303,27 @@ function draw() {
   ctx.stroke();
   ctx.setLineDash([]);
 
-  // Paddles
   ctx.fillStyle = '#fff';
-  ctx.fillRect(10, playerY, paddleWidth, paddleHeight);           // Player
-  ctx.fillRect(canvas.width - 20, aiY, paddleWidth, paddleHeight); // AI
-
-  // Ball
+  ctx.fillRect(10, playerY, paddleWidth, paddleHeight);
+  ctx.fillRect(canvas.width - 20, aiY, paddleWidth, paddleHeight);
   ctx.fillRect(ballX, ballY, ballSize, ballSize);
 }
 
 function update() {
-  // Player movement
   if (upPressed && playerY > 0) playerY -= 8;
   if (downPressed && playerY < canvas.height - paddleHeight) playerY += 8;
 
-  // AI movement (simple but decent)
   if (aiY + paddleHeight/2 < ballY) aiY += 6;
   if (aiY + paddleHeight/2 > ballY) aiY -= 6;
 
-  // Ball movement
   ballX += ballSpeedX;
   ballY += ballSpeedY;
 
-  // Wall bounce
   if (ballY <= 0 || ballY >= canvas.height - ballSize) ballSpeedY = -ballSpeedY;
 
-  // Paddle collision
-  if (ballX <= 20 && ballY > playerY && ballY < playerY + paddleHeight) {
-    ballSpeedX = -ballSpeedX * 1.05;
-  }
-  if (ballX >= canvas.width - 30 && ballY > aiY && ballY < aiY + paddleHeight) {
-    ballSpeedX = -ballSpeedX * 1.05;
-  }
+  if (ballX <= 20 && ballY > playerY && ballY < playerY + paddleHeight) ballSpeedX = -ballSpeedX * 1.05;
+  if (ballX >= canvas.width - 30 && ballY > aiY && ballY < aiY + paddleHeight) ballSpeedX = -ballSpeedX * 1.05;
 
-  // Scoring
   if (ballX < 0) {
     scoreAI++;
     resetBall();
@@ -297,7 +349,6 @@ function gameLoop() {
   requestAnimationFrame(gameLoop);
 }
 
-// Keyboard controls
 document.addEventListener('keydown', e => {
   if (e.key === 'ArrowUp') upPressed = true;
   if (e.key === 'ArrowDown') downPressed = true;
@@ -307,23 +358,20 @@ document.addEventListener('keyup', e => {
   if (e.key === 'ArrowDown') downPressed = false;
 });
 
-// Open / Close Pong
 function openPong() {
-  pongWindow.style.display = 'block';
-  // Reset scores when opening
+  document.getElementById('pongWindow').style.display = 'block';
   scorePlayer = 0;
   scoreAI = 0;
   resetBall();
 }
 
 function closePong() {
-  pongWindow.style.display = 'none';
+  document.getElementById('pongWindow').style.display = 'none';
 }
 
-// Start the game loop
 gameLoop();
 
-// ====================== YOUR EXISTING FUNCTIONS ======================
+// ====================== YOUR TOOLS ======================
 function predictJob() {
   const name = document.getElementById("name").value || "Névtelen";
   const jobList = ["Lélekromboló Táblázat Elemző","Senior Excel Majom","Hivatalos Meeting Ütemező","Nyomtató Elakadás Szakértő","Kávéfutár Koordinátor","Belépő Szintű Exisztenciális Szorongás Menedzser"];
