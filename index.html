@@ -84,7 +84,7 @@
     text-align: right;
   }
 
-  /* Homework Icon - Left Side */
+  /* Homework Icon */
   #homeworkIcon {
     position: fixed;
     left: 30px;
@@ -138,50 +138,11 @@
     margin-bottom: 8px;
     font-weight: bold;
   }
-
-  /* Clippy */
-  #clippy {
-    position: fixed;
-    right: 40px;
-    top: 120px;
-    width: 180px;
-    z-index: 999;
-    transition: top 0.6s cubic-bezier(0.25, 0.1, 0.25, 1);
-  }
-
-  #clippy img {
-    width: 100%;
-    image-rendering: pixelated;
-    filter: drop-shadow(4px 4px 0 #000);
-  }
-
-  .speech-bubble {
-    position: absolute;
-    left: -230px;
-    top: 20px;
-    width: 210px;
-    background: white;
-    border: 3px solid #000;
-    padding: 12px;
-    font-size: 12px;
-    line-height: 1.4;
-    box-shadow: 3px 3px 0 #000;
-    min-height: 60px;
-  }
-
-  .speech-bubble:after {
-    content: '';
-    position: absolute;
-    right: -20px;
-    top: 35px;
-    border: 10px solid transparent;
-    border-left-color: #000;
-  }
 </style>
 </head>
 <body>
 
-<!-- Stacked Windows (non-closable) -->
+<!-- Stacked non-closable windows -->
 <div class="window">
   <div class="title-bar">
     <span>FutureJob™ v1.0 - Karrier Sors Előrejelző</span>
@@ -274,7 +235,7 @@ function speak(text) {
   type();
 }
 
-// ====================== PONG GAME ======================
+// ====================== PONG GAME (Left/Right arrows control paddle) ======================
 let canvas = document.getElementById('pongCanvas');
 let ctx = canvas.getContext('2d');
 let scorePlayer = 0;
@@ -304,15 +265,18 @@ function draw() {
   ctx.setLineDash([]);
 
   ctx.fillStyle = '#fff';
-  ctx.fillRect(10, playerY, paddleWidth, paddleHeight);
-  ctx.fillRect(canvas.width - 20, aiY, paddleWidth, paddleHeight);
+  ctx.fillRect(10, playerY, paddleWidth, paddleHeight);           // Player
+  ctx.fillRect(canvas.width - 20, aiY, paddleWidth, paddleHeight); // AI
+
   ctx.fillRect(ballX, ballY, ballSize, ballSize);
 }
 
 function update() {
+  // Player movement with LEFT / RIGHT arrows
   if (upPressed && playerY > 0) playerY -= 8;
   if (downPressed && playerY < canvas.height - paddleHeight) playerY += 8;
 
+  // Simple AI
   if (aiY + paddleHeight/2 < ballY) aiY += 6;
   if (aiY + paddleHeight/2 > ballY) aiY -= 6;
 
@@ -350,14 +314,16 @@ function gameLoop() {
 }
 
 document.addEventListener('keydown', e => {
-  if (e.key === 'ArrowUp') upPressed = true;
-  if (e.key === 'ArrowDown') downPressed = true;
-});
-document.addEventListener('keyup', e => {
-  if (e.key === 'ArrowUp') upPressed = false;
-  if (e.key === 'ArrowDown') downPressed = false;
+  if (e.key === 'ArrowLeft') upPressed = true;   // Left Arrow = Up
+  if (e.key === 'ArrowRight') downPressed = true; // Right Arrow = Down
 });
 
+document.addEventListener('keyup', e => {
+  if (e.key === 'ArrowLeft') upPressed = false;
+  if (e.key === 'ArrowRight') downPressed = false;
+});
+
+// Open / Close Pong
 function openPong() {
   document.getElementById('pongWindow').style.display = 'block';
   scorePlayer = 0;
