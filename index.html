@@ -8,8 +8,8 @@
 
   body {
     margin: 0;
-    padding: 20px 20px 20px 280px; /* space for Clippy */
-    background: #008080;
+    padding: 20px 20px 20px 280px;
+    background: #008080 url('https://i.imgur.com/0z5v7pE.jpg') center/cover no-repeat fixed;
     font-family: 'MS Reference Sans Serif', sans-serif;
     font-size: 13px;
     line-height: 1.4;
@@ -88,7 +88,7 @@
     text-align: right;
   }
 
-  /* UNHINGED CLIPPY - now animated GIF */
+  /* Animated Clippy */
   #clippy {
     position: fixed;
     right: 40px;
@@ -100,7 +100,7 @@
 
   #clippy img {
     width: 100%;
-    image-rendering: pixelated; /* keeps that retro pixel look */
+    image-rendering: pixelated;
     filter: drop-shadow(4px 4px 0 #000);
   }
 
@@ -129,7 +129,7 @@
 </head>
 <body>
 
-<!-- The three stacked windows (same as before) -->
+<!-- The three windows -->
 <div class="window">
   <div class="title-bar">
     <span>FutureJob™ v1.0 - Karrier Sors Előrejelző</span>
@@ -179,42 +179,26 @@
   <div class="status">Kész</div>
 </div>
 
-<!-- ANIMATED CLIPPY -->
+<!-- Animated Clippy -->
 <div id="clippy">
-  <img src="https://i.imgur.com/7vN9v9K.gif" alt="Unhinged Clippy"> 
-  <!-- This is a reliable animated Clippy GIF -->
+  <img src="https://i.imgur.com/7vN9v9K.gif" alt="Animated Clippy">
   <div id="bubble" class="speech-bubble">
     Hé haver, készen állsz tönkretenni az életedet? 😈
   </div>
 </div>
 
 <script>
-// Clippy random unhinged lines
-const clippyLines = [
-  "ÓÓÓÓÓÓ, ez a tanár egy pszichopata! Én mondom neked.",
-  "Ne nyomd meg azt a gombot... vagy nyomd, mindegy, mind meghalunk.",
-  "Ez a jövőbeli állásod? Gratulálok, hivatalosan is rabszolga vagy.",
-  "A tanárod úgy néz ki, mint aki tegnap éjjel egy démonnal alkudott.",
-  "Ez az excuse gyengébb, mint a te motivációd az egyetemen.",
-  "Segítség! Én csak egy gemkapocs vagyok, de még én is szenvedek ettől!",
-  "Ha ezt beadod a tanárnak, garantáltan kapsz egy F-et... és egy pszichológust.",
-  "A lelked már rég feladta. Én még itt vagyok veled.",
-  "Ez a roast túl gyenge. Akarod, hogy én írjak valami igazán beteget?",
-  "Ne felejtsd el: az egyetem csak egy hosszú, drága vicc."
-];
-
+// Clippy reactions
 function updateClippy(text) {
   document.getElementById("bubble").innerHTML = text;
 }
 
-// Make Clippy follow scroll
 window.addEventListener('scroll', () => {
   const clippy = document.getElementById('clippy');
   const scrollY = window.scrollY;
   clippy.style.top = Math.max(80, 120 + scrollY * 0.6) + 'px';
 });
 
-// Future Job
 function predictJob() {
   const name = document.getElementById("name").value || "Névtelen";
   const jobList = ["Lélekromboló Táblázat Elemző","Senior Excel Majom","Hivatalos Meeting Ütemező","Nyomtató Elakadás Szakértő","Kávéfutár Koordinátor","Belépő Szintű Exisztenciális Szorongás Menedzser"];
@@ -228,10 +212,9 @@ function predictJob() {
     Juttatások: Nincsenek<br>
     Lélekvesztés: 94%
   `;
-  updateClippy("Haha, gratulálok a rabszolgasághoz! Én legalább csak egy gemkapocs vagyok.");
+  updateClippy("Haha, gratulálok a rabszolgasághoz!");
 }
 
-// Professor Roast
 function roastProfessor() {
   const input = document.getElementById("profInput").value.trim() || "ez a tanár";
   const roasts = [
@@ -244,10 +227,9 @@ function roastProfessor() {
   ];
   const roast = roasts[Math.floor(Math.random() * roasts.length)];
   document.getElementById("resultRoast").innerHTML = roast;
-  updateClippy("BRUH... ez még nekem is fájt. És én csak gemkapocs vagyok.");
+  updateClippy("BRUH... ez még nekem is fájt.");
 }
 
-// Excuse Generator
 function generateExcuse() {
   const type = document.getElementById("excuseType").value;
   const excuses = {
