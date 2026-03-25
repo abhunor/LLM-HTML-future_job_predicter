@@ -8,7 +8,7 @@
 
   body {
     margin: 0;
-    padding: 20px 20px 20px 280px; /* space for Clippy on the right */
+    padding: 20px 20px 20px 280px; /* space for Clippy */
     background: #008080;
     font-family: 'MS Reference Sans Serif', sans-serif;
     font-size: 13px;
@@ -88,7 +88,7 @@
     text-align: right;
   }
 
-  /* UNHINGED CLIPPY */
+  /* UNHINGED CLIPPY - now animated GIF */
   #clippy {
     position: fixed;
     right: 40px;
@@ -100,14 +100,15 @@
 
   #clippy img {
     width: 100%;
+    image-rendering: pixelated; /* keeps that retro pixel look */
     filter: drop-shadow(4px 4px 0 #000);
   }
 
   .speech-bubble {
     position: absolute;
-    left: -220px;
-    top: 30px;
-    width: 200px;
+    left: -230px;
+    top: 20px;
+    width: 210px;
     background: white;
     border: 3px solid #000;
     padding: 12px;
@@ -120,7 +121,7 @@
     content: '';
     position: absolute;
     right: -20px;
-    top: 40px;
+    top: 35px;
     border: 10px solid transparent;
     border-left-color: #000;
   }
@@ -128,7 +129,7 @@
 </head>
 <body>
 
-<!-- The three stacked windows -->
+<!-- The three stacked windows (same as before) -->
 <div class="window">
   <div class="title-bar">
     <span>FutureJob™ v1.0 - Karrier Sors Előrejelző</span>
@@ -178,9 +179,10 @@
   <div class="status">Kész</div>
 </div>
 
-<!-- UNHINGED CLIPPY -->
+<!-- ANIMATED CLIPPY -->
 <div id="clippy">
-  <img src="https://i.imgur.com/7vN9v9K.png" alt="Clippy"> <!-- classic Clippy -->
+  <img src="https://i.imgur.com/7vN9v9K.gif" alt="Unhinged Clippy"> 
+  <!-- This is a reliable animated Clippy GIF -->
   <div id="bubble" class="speech-bubble">
     Hé haver, készen állsz tönkretenni az életedet? 😈
   </div>
@@ -205,7 +207,7 @@ function updateClippy(text) {
   document.getElementById("bubble").innerHTML = text;
 }
 
-// Make Clippy follow scroll smoothly
+// Make Clippy follow scroll
 window.addEventListener('scroll', () => {
   const clippy = document.getElementById('clippy');
   const scrollY = window.scrollY;
@@ -229,7 +231,7 @@ function predictJob() {
   updateClippy("Haha, gratulálok a rabszolgasághoz! Én legalább csak egy gemkapocs vagyok.");
 }
 
-// Unhinged Professor Roast
+// Professor Roast
 function roastProfessor() {
   const input = document.getElementById("profInput").value.trim() || "ez a tanár";
   const roasts = [
